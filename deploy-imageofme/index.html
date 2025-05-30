@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reece Stout - Interactive Resume</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f4f4;
+            overflow-x: hidden;
+        }
+
+        /* Fade-in Animation for Scroll */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(to right, #001f3f, #0074d9);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+        }
+        .hero img {
+            width: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .hero h1 {
+            font-size: 48px;
+            margin: 0;
+            animation: slideInLeft 1s ease-out;
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .hero p {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        .typing-effect {
+            border-right: 2px solid white;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: white; }
+        }
+        .scroll-down {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-20px); }
+            60% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* Career Summary */
+        .career-summary {
+            background-color: #e0e0e0;
+            padding: 50px 20px;
+            text-align: center;
+        }
+        .career-summary h2 {
+            font-size: 36px;
+            color: #001f3f;
+            animation: fadeInUp 1s ease-out;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .career-summary p {
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Skills Section */
+        .skills {
+            display: flex;
+            justify-content: space-around;
+            padding: 50px 20px;
+            background-color: white;
+        }
+        .skills-column {
+            width: 45%;
+        }
+        .skills-column h3 {
+            font-size: 24px;
+            color: #001f3f;
+            margin-bottom: 20px;
+        }
+        .skills-list {
+            list-style: none;
+            padding: 0;
+        }
+        .skills-list li {
+            font-size: 18px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.5s, transform 0.5s, color 0.3s;
+        }
+        .skills-list li.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .skills-list li img {
+            width: 24px;
+            margin-right: 10px;
+            transition: transform 0.3s;
+        }
+        .skills-list li:hover {
+            color: #0074d9;
+            transform: translateX(10px);
+        }
+        .skills-list li:hover img {
+            transform: rotate(360deg);
+        }
+
+        /* Work Experience */
+        .work-experience {
+            padding: 50px 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .work-experience h2 {
+            font-size: 36px;
+            color: #001f3f;
+            margin-bottom: 30px;
+        }
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #001f3f;
+            animation: grow 2s ease-out forwards;
+        }
+        @keyframes grow {
+            from { height: 0; }
+            to { height: 100%; }
+        }
+        .timeline-item {
+            position: relative;
+            margin: 20px 0;
+            text-align: left;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        .timeline-item.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: #0074d9;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            transition: transform 0.3s;
+        }
+        .timeline-item:hover::before {
+            transform: translateX(-50%) scale(1.2);
+        }
+        .timeline-content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 45%;
+            position: relative;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .timeline-content.active {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        .timeline-content.left {
+            left: 0;
+        }
+        .timeline-content.right {
+            left: 55%;
+        }
+        .timeline-content h3 {
+            font-size: 20px;
+            color: #001f3f;
+            margin: 0 0 10px;
+        }
+        .timeline-content p {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        /* Pop-up Styles */
+        .popup {
+            position: absolute;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            width: 300px;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.9);
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .timeline-item:hover .popup {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        .popup.left {
+            right: 110%;
+            top: 0;
+        }
+        .popup.right {
+            left: 110%;
+            top: 0;
+        }
+        .popup h4 {
+            font-size: 18px;
+            color: #001f3f;
+            margin: 0 0 10px;
+        }
+        .popup ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Achievements */
+        .achievements {
+            padding: 50px 20px;
+            background-color: white;
+            text-align: center;
+        }
+        .achievements h2 {
+            font-size: 36px;
+            color: #001f3f;
+            margin-bottom: 30px;
+        }
+        .achievement-list {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .achievement {
+            background: #e0e0e0;
+            padding: 20px;
+            border-radius: 5px;
+            width: 200px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s, box-shadow 0.3s;
+        }
+        .achievement.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .achievement:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .achievement img {
+            width: 50px;
+            margin-bottom: 10px;
+            transition: transform 0.5s;
+        }
+        .achievement.visible img {
+            animation: spin 1s ease-out;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .achievement p {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 50px 20px;
+            background-color: #001f3f;
+            color: white;
+            text-align: center;
+        }
+        .contact h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .contact-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .contact-icons a {
+            color: white;
+            font-size: 24px;
+            text-decoration: none;
+            transition: transform 0.3s, color 0.3s;
+        }
+        .contact-icons a:hover {
+            color: #0074d9;
+            transform: scale(1.2);
+        }
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: transform 0.3s;
+        }
+        .contact-form input:focus, .contact-form textarea:focus {
+            transform: scale(1.02);
+            outline: none;
+        }
+        .contact-form button {
+            background: #0074d9;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .contact-form button:hover {
+            background: #005bb5;
+            transform: scale(1.1);
+        }
+        .download-btn {
+            display: inline-block;
+            margin-top: 20px;
+            background: #0074d9;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .download-btn:hover {
+            background: #005bb5;
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        .footer {
+            background: #001f3f;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .skills {
+                flex-direction: column;
+                align-items: center;
+            }
+            .skills-column {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            .timeline::before {
+                left: 10px;
+            }
+            .timeline-item::before {
+                left: 10px;
+                transform: none;
+            }
+            .timeline-content {
+                width: 100%;
+                left: 0 !important;
+                margin-left: 40px;
+            }
+            .popup.left, .popup.right {
+                left: 0;
+                right: auto;
+                top: 100%;
+                width: 90%;
+                margin-left: 40px;
+            }
+            .achievement-list {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <img src="me.jpg" alt="Reece Stout">
+        <h1>Reece Stout</h1>
+        <p class="typing-effect">Innovative IT Professional with 16+ Years of Experience</p>
+        <div class="scroll-down">↓</div>
+    </section>
+
+    <!-- Career Summary -->
+    <section class="career-summary fade-in">
+        <h2>About Me</h2>
+        <p>Innovative and dedicated IT professional with over 16 years of experience in IT service management, network administration, and technical support. Proven track record of optimizing systems and processes, including earning the Hulu Spark Award twice for workplace innovations. Skilled in ServiceNow, SalesForce, SolarWinds, and advanced Excel, with a strong ability to solve complex problems and interpret data quickly.</p>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="skills fade-in">
+        <div class="skills-column">
+            <h3>Technical Tools Skills</h3>
+            <ul class="skills-list">
+                <li><img src="servicenow.png" alt="ServiceNow"> ServiceNow Reports and Dashboards</li>
+                <li><img src="salesforce-icon.png" alt="SalesForce"> SalesForce Reports and Dashboards</li>
+                <li><img src="solarwinds-icon.png" alt="SolarWinds"> SolarWinds Node Monitoring</li>
+                <li><img src="prtg-icon.png" alt="PRTG"> PRTG/Plixer Network Flow Data Analysis</li>
+                <li><img src="ibm.png" alt="IBM iSeries"> IBM iSeries AS 400 Operator</li>
+                <li><img src="newrelic-icon.png" alt="New Relic"> New Relic E-Commerce Monitoring</li>
+                <li><img src="excel-icon.png" alt="Excel"> Advanced Excel Skills</li>
+            </ul>
+        </div>
+        <div class="skills-column">
+            <h3>Professional Skills</h3>
+            <ul class="skills-list">
+                <li><img src="problem-solving-icon.png" alt="Problem-Solving"> Problem-Solving</li>
+                <li><img src="critical-thinking-icon.png" alt="Critical Thinking"> Critical Thinking</li>
+                <li><img src="data-icon.png" alt="Data Interpretation"> Quickly Interpret New Data</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Work Experience -->
+    <section class="work-experience fade-in">
+        <h2>Work Experience</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content left">
+                    <h3>Retail Wireless Consultant, USCellular (04/2024–Present)</h3>
+                    <p>Android/Google device expert. Troubleshoot Home Internet issues.</p>
+                </div>
+                <div class="popup left">
+                    <h4>Retail Wireless Consultant, USCellular, Springfield, MO</h4>
+                    <ul>
+                        <li>Android/Google device expert.</li>
+                        <li>Handle all Home Internet troubleshooting that comes into the store.</li>
+                        <li>Educate customers on the pros and cons of each device and plan to tailor a solution that meets their needs.</li>
+                        <li>Sought out and acquired small business’ with the need for multiple lines.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content right">
+                    <h3>IT Service Operator, Basspro (08/2021–02/2024)</h3>
+                    <p>Led incident response, managed Active Directory and A/S 400.</p>
+                </div>
+                <div class="popup right">
+                    <h4>IT Service Operator, Basspro, Springfield, MO</h4>
+                    <ul>
+                        <li>Incident Response for all levels of the Enterprise, individual devices to mass outages, and cyber security attacks.</li>
+                        <li>Active Directory profiling and password resets.</li>
+                        <li>A/S 400: Monitored QSYSOPR message queue and responded to all messages with the assistance of the corresponding developer.</li>
+                        <li>Created and Profiled A/S 400 accounts for new and returning users.</li>
+                        <li>Investigated issues or errors users had with their account access.</li>
+                        <li>Stopped, Started, and Ran Jobs or Servers as needed.</li>
+                        <li>Network Issue Investigations: Using numerous tools, I would investigate circuit capacity, quality, and power issues to ensure quick uptime.</li>
+                        <li>Coordinate with 3rd party vendors and ISPs to open, track, and escalate circuit-down tickets.</li>
+                        <li>Used and taught Operators how to use: SolarWinds, PRTG, Plixer/Scrutinizer, Service Now.</li>
+                        <li>Created Reports, Dashboards, and filter URLs to support the needs of Operations.</li>
+                        <li>Laptop, Desktop, Thin Client, VM, and Terminal Server support.</li>
+                        <li>Remote APC and PDU management.</li>
+                        <li>Coordinated with on-site retail teams to move on and off battery backup power to facilitate operations at the retail sites.</li>
+                        <li>NOC Monitoring: Monitored all Retail and ECOM platforms for errors or CPU utilization.</li>
+                        <li>Assisted with the day to day of Change Management.</li>
+                        <li>Walkthroughs of the Data Center to ensure there are no issues with Servers, PDUs, or AC units.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content left">
+                    <h3>Associate Content Analyst, Hulu (10/2017–01/2021)</h3>
+                    <p>SME for internal systems, led Salesforce deployments.</p>
+                </div>
+                <div class="popup left">
+                    <h4>Associate Content Analyst, Hulu, San Antonio, TX</h4>
+                    <ul>
+                        <li>Subject Matter Expert (SME) for all internal Hulu systems.</li>
+                        <li>Change Management for tooling enhancements.</li>
+                        <li>Write Requirements for Developers.</li>
+                        <li>UAT Scripts and Requirements.</li>
+                        <li>Full life cycle Salesforce deployment.</li>
+                        <li>Coordinated and ran pilots for new tooling updates.</li>
+                        <li>Wrote Communications to 2000+ users for each update.</li>
+                        <li>Operational Data Analysis: Recommend areas for efficiency gains.</li>
+                        <li>Tableau Desktop.</li>
+                        <li>Salesforce Reports.</li>
+                        <li>Salesforce Dashboards.</li>
+                        <li>Contributing to peer development.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content right">
+                    <h3>PC Support Technician, O’Reilly Automotive (10/2016–07/2017)</h3>
+                    <p>Technical support for Active Directory and A/S 400.</p>
+                </div>
+                <div class="popup right">
+                    <h4>PC Support Technician, O’Reilly Automotive, Springfield, MO</h4>
+                    <ul>
+                        <li>Technical Support.</li>
+                        <li>Active Directory.</li>
+                        <li>A/S 400.</li>
+                        <li>Network troubleshooting.</li>
+                        <li>Develop training for Outlook and assist with Outlook rollout and training.</li>
+                        <li>Laptop, Desktop, Thin Client, VM, and Terminal Server support.</li>
+                        <li>Remote printer management.</li>
+                        <li>IBM asset manager.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content left">
+                    <h3>Turbotax Quality Agent, Teletech (09/2013–07/2016)</h3>
+                    <p>Troubleshot tax data entry and Windows issues.</p>
+                </div>
+                <div class="popup left">
+                    <h4>Turbotax Quality Agent, Teletech, Springfield, MO</h4>
+                    <ul>
+                        <li>Troubleshoot Tax Data Entry.</li>
+                        <li>Troubleshoot Windows.</li>
+                        <li>Account Administration.</li>
+                        <li>Knowledge Base.</li>
+                        <li>Coach new agents on best practices.</li>
+                        <li>Salesforce.</li>
+                        <li>Citrix and ICBM.</li>
+                        <li>Excel and Access.</li>
+                        <li>Created and developed quality form.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content right">
+                    <h3>Store Manager, PCExpress (11/2012–06/2013)</h3>
+                    <p>Managed store operations and PC repair team.</p>
+                </div>
+                <div class="popup right">
+                    <h4>Store Manager, PCExpress, Ava, MO</h4>
+                    <ul>
+                        <li>PC Technician.</li>
+                        <li>Sold Computer Components.</li>
+                        <li>Ran Day to day-to-day operations of the Store.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content left">
+                    <h3>Lead Firedog Technician, Circuit City/Firedog LLC (01/2008–05/2009)</h3>
+                    <p>Oversaw PC repair operations and trained technicians.</p>
+                </div>
+                <div class="popup left">
+                    <h4>Lead Firedog Technician, Circuit City/Firedog LLC, Amarillo, TX</h4>
+                    <ul>
+                        <li>Ran day-to-day PC repair operations.</li>
+                        <li>Assigned tasks to other technicians.</li>
+                        <li>Scheduled In-Home installations.</li>
+                        <li>Trained new technicians in computer repair.</li>
+                        <li>Communicated on daily basis with warranty warehouse.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Achievements -->
+    <section class="achievements fade-in">
+        <h2>Awards and Achievements</h2>
+        <div class="achievement-list">
+            <div class="achievement">
+                <img src="trophy-icon.png" alt="Hulu Spark Award">
+                <p>Known Issues Database Innovation</p>
+            </div>
+            <div class="achievement">
+                <img src="trophy-icon.png" alt="Hulu Spark Award">
+                <p>Custom SalesForce Layout</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact fade-in">
+        <h2>Get in Touch</h2>
+        <div class="contact-icons">
+            <a href="https://www.linkedin.com/in/reece-stout" target="_blank">LinkedIn</a>
+            <a href="mailto:iamwute@gmail.com">Email</a>
+        </div>
+        <form class="contact-form" action="https://formspree.io/f/mqapzqdo" method="POST">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <textarea name="message" placeholder="Message" rows="5" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+        <a href="resume.pdf" class="download-btn" download>Download PDF Resume</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer fade-in">
+        <p>© 2025 Reece Stout</p>
+    </footer>
+
+    <!-- JavaScript for Interactivity and Animations -->
+    <script>
+        // Scroll-based animations
+        function checkVisibility() {
+            const elements = document.querySelectorAll('.fade-in');
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            const skills = document.querySelectorAll('.skills-list li');
+            const achievements = document.querySelectorAll('.achievement');
+            const triggerBottom = window.innerHeight * 0.8;
+
+            // General fade-in sections
+            elements.forEach(element => {
+                const boxTop = element.getBoundingClientRect().top;
+                if (boxTop < triggerBottom) {
+                    element.classList.add('visible');
+                }
+            });
+
+            // Timeline items (job history) appear individually
+            timelineItems.forEach((item, index) => {
+                const itemTop = item.getBoundingClientRect().top;
+                if (itemTop < triggerBottom) {
+                    setTimeout(() => {
+                        item.classList.add('visible');
+                    }, index * 200); // Staggered delay for each item
+                }
+            });
+
+            // Skills appear with stagger
+            skills.forEach((skill, index) => {
+                const skillTop = skill.getBoundingClientRect().top;
+                if (skillTop < triggerBottom) {
+                    setTimeout(() => {
+                        skill.classList.add('visible');
+                    }, index * 100);
+                }
+            });
+
+            // Achievements appear with stagger
+            achievements.forEach((achievement, index) => {
+                const achTop = achievement.getBoundingClientRect().top;
+                if (achTop < triggerBottom) {
+                    setTimeout(() => {
+                        achievement.classList.add('visible');
+                    }, index * 150);
+                }
+            });
+        }
+
+        // Timeline interactivity (click to highlight)
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.timeline-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                item.querySelector('.timeline-content').classList.add('active');
+            });
+        });
+
+        // Trigger animations on load and scroll
+        window.addEventListener('load', checkVisibility);
+        window.addEventListener('scroll', checkVisibility);
+    </script>
+</body>
+</html>
